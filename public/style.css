@@ -1,0 +1,44 @@
+html {
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%
+  }
+  
+  body {
+  color:black;
+  height:100%
+  }
+  
+  div.header {
+    height: 80px;
+    font-size: 60px;
+    font: Arial;
+    font-weight: bold;
+    color: white;
+    width: 100%;
+    text-align: center;
+    background-color: darkblue
+  }
+  
+  div.footer {
+    background-color: black;
+    color: white;
+    position: fixed;
+     left: 0;
+     bottom: 0;
+     width: 100%;
+     height: 20px;
+  }
+  
+  div.content {
+    height : auto;
+    font-size: 25px;
+    font: Arial;
+    scroll-behavior: auto;
+    padding: 20px;
+    width: 100%;
+  }
+  
+  .link {margin: 5px;color:white;}
+  .link:hover{margin: 5px;color:blue;}
+  

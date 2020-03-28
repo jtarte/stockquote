@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Dummy Stock Quotes</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <style>
+      table, th, td {
+        border: 6px solid white;
+      }
+    </style>
+  </head>
+  <body style="margin:25px">
+    <div id="header" class="header">Dummy Stock Quote</div>
+    <div id="symbol" class="content">
+      <form method="POST" action="/" >
+        Add new symbol: <input type="text" name="symbol"></input>
+        <input type="submit" value="Add">
+      </form>  
+     
+    </div>
+
+    <div id="content" class="content">
+      <% 
+        if(err_code!=0)
+        {
+      %>
+      <%= err_msg %> <br>
+      <%
+        }
+        if(result != undefined)
+        { 
+          var keys=Object.keys(result)
+      %>   
+      <table>
+        <% for(i=0;i<keys.length;i++){ 
+        %>  
+          <tr>
+            <td><%= keys[i] %></td>
+            <td><%= result[keys[i]].price.longName %></td>
+            <td align="right"><%= result[keys[i]].price.regularMarketPrice %> <%= result[keys[i]].price.currencySymbol %></td>
+          </tr>
+        <% } %>
+      </table>
+    <%
+      }
+    %>
+    </div>
+    <div id="footer" class="footer">Dummy Stock Quote, jerome.tarte@fr.ibm.com, &copy;IBM</div>
+  </body>
+</html>
