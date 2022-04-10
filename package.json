@@ -10,7 +10,6 @@
     "directory": "incubator/nodejs-express/templates/simple"
   },
   "scripts": {
-    "test": "mocha",
     "start": "node app.js"
   },
   "devDependencies": {
