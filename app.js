@@ -1,9 +1,10 @@
 const express = require('express');
-const yahooFinance = require('yahoo-finance');
 const bodyParser = require('body-parser');
+const axios = require('axios');
 
 
 var app = express();
+const port = 3000
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
@@ -13,60 +14,75 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var symbolList = ['AMZN','AAPL','FB','GOOG','IBM','MSFT']
 
 
+
 function getQuotes(res,err_msg) {
-  yahooFinance.quote({
-    symbols: symbolList,
-    modules: [ 'price', 'summaryDetail' ] // see the docs for the full list
-    }, function (err, quotes){
-      if(err) {
-        res.render('index',{err_code: 1, err_msg:"error occur during the quote interogation. Please retry later."})
-      }
-      else
-      {
-        if (err_msg == undefined)
-        {
-          res.render('index',{result:quotes, err_code:0});
-        }
-        else
-        {
-          res.render('index',{result:quotes, err_code:2,err_msg:err_msg});
-        }
-      }
-    })
+  console.log(err_msg)
+  var ec = 0;
+  if (err_msg != ''){
+    ec=2
+  } 
+  getQuotesList(symbolList).then(data=> {
+      res.render('index',{'result':data,'err_code':ec,'err_msg':err_msg})
+    }   
+  )
 }
 
-function checkSymbol(sb,callback){
-  yahooFinance.quote({
-    symbol: sb,
-    modules: ['summaryProfile' ] // see the docs for the full list
-  }, function (err, quotes) {
-    if(err) {
-       callback(false);
-    }
-    else
-    {
-      callback(true);
-    }
-  })
-}
+const getQuotesList = stockList => new Promise((resolve, reject) => {
+  if (!stockList) return reject(Error('Stock symbol list required'));
+  if (!Array.isArray(stockList)) return reject(Error('Invalid argument type. Array required.'));
+  
+  const list = [...stockList];
+  if (!list.length || list.length < 1) return Promise.resolve([]);
+  
+  const promises = list.map(getQuote);
+  return resolve(Promise.all(promises));
+});
+
+
+const getQuote = ns => new Promise((resolve,reject) => {
+  if (!ns) return resolve(Error('Stock symbol required'));
+  if (typeof ns !== 'string') return resolve(Error(`Invalid argument type. Required: string. Found: ${typeof ns}`));
+    
+  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ns}`;
+  axios.get(url).then(res => {
+    const { data } = res;
+        if (!data || !data.quoteResponse || !data.quoteResponse.result || data.quoteResponse.result.length === 0) {
+            return resolve(new Error(`Error retrieving info for symbol ${ns}`));
+        }
+        return resolve(data.quoteResponse.result[0]);
+    }).catch(err => reject(err));
+})
+
+
 
 app.get('/', function(req, res){
   //res.send("Hello from Appsody!");
-  getQuotes(res)
+  getQuotes(res,'')
 });
 
 app.post("/", function(req, res){
-  ns=req.body.symbol;
-  checkSymbol(ns, function(result){
-    if(result){
-      symbolList.push(ns)
-      getQuotes(res)
-    }else{
-      console.error("Symbol "+ns+" not found.");
-      err_msg = "symbol "+ns+" not found. Please verify your value."
-      getQuotes(res, err_msg)
+  var ns=req.body.symbol;
+  getQuote(ns).then((result, err) =>{
+    if (err == 'undefined' ){
+      console.log(err)
+      getQuotes(res,'error during the quote query')
+    }
+    else {
+      console.log(result)
+      if (result instanceof Error){
+        getQuotes(res,result.message)
+      }
+      else
+      {
+        symbolList.push(ns)
+        getQuotes(res,'')
+      }
     }
   })
 });
  
-module.exports.app = app;
+//module.exports.app = app;
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
