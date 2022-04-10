@@ -1,14 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="ejs">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Dummy Stock Quotes</title>
     <link rel="stylesheet" type="text/css" href="/style.css">
-    <style>
-      table, th, td {
-        border: 6px solid white;
-      }
-    </style>
   </head>
   <body style="margin:25px">
     <div id="header" class="header">Dummy Stock Quote</div>
@@ -33,11 +28,16 @@
           var keys=Object.keys(result)
       %>   
         <table>
+          <caption></caption>
+          <tr>
+            <th style="text-align:left">Stock name</th>
+            <th>Market price</th>
+          </tr>
         <% for(i=0;i<keys.length;i++){ 
           %>  
             <tr>
               <td><%= result[i].longName %></td>
-              <td align="right"><%= result[i].regularMarketPrice %> <%= result[i].currency %></td>
+              <td style="text-align:right"><%= result[i].regularMarketPrice %> <%= result[i].currency %></td>
             </tr>
           <% } %>
         </table>

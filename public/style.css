@@ -41,4 +41,9 @@ html {
   
   .link {margin: 5px;color:white;}
   .link:hover{margin: 5px;color:blue;}
+
+  table, th, td {
+    border: 6px solid white;
+  }
+
   

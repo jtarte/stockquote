@@ -55,8 +55,7 @@ const getQuote = ns => new Promise((resolve,reject) => {
 
 
 
-app.get('/', function(req, res){
-  //res.send("Hello from Appsody!");
+app.get('/', function(_req, res){
   getQuotes(res,'')
 });
 
@@ -81,7 +80,6 @@ app.post("/", function(req, res){
   })
 });
  
-//module.exports.app = app;
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
