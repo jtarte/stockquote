@@ -10,7 +10,7 @@ describe('Node.js Express Simple template', function () {
     // Testing / endpoint, should return 200
     describe('/ endpoint', function () {
         it('status', function (done) {
-            request(url + '/', function (error, response, body) {
+            request(url + '/', function (_error, response, _body) {
                 expect(response.statusCode).to.equal(200);
                 done();
             });
