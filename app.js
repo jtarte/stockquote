@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const axios = require('axios');
+const yf = require('yahoo-finance2').default;
+
 
 // define the server 
 var app = express();
@@ -43,15 +44,24 @@ const getQuote = ns => new Promise((resolve,reject) => {
   if (!ns) return resolve(Error('Stock symbol required'));
   if (typeof ns !== 'string') return resolve(Error(`Invalid argument type. Required: string. Found: ${typeof ns}`));
     
-  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ns}`;
-  axios.get(url).then(res => {
-    const { data } = res;
-        if (!data || !data.quoteResponse || !data.quoteResponse.result || data.quoteResponse.result.length === 0) {
-            return resolve(new Error(`Error retrieving info for symbol ${ns}`));
-        }
-        return resolve(data.quoteResponse.result[0]);
-    }).catch(err => reject(err));
-})
+  // const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ns}`;
+  // axios.get(url).then(res => {
+  //   const { data } = res;
+  //       if (!data || !data.quoteResponse || !data.quoteResponse.result || data.quoteResponse.result.length === 0) {
+  //           return resolve(new Error(`Error retrieving info for symbol ${ns}`));
+  //       }
+  //       return resolve(data.quoteResponse.result[0]);
+  //   }).catch(err => reject(err));
+  
+  yf.quote(ns).then(data => { 
+      if (!data || Object.keys(data).length === 0) {
+          return resolve(new Error(`Error retrieving info for symbol ${ns}`));
+      }
+      return resolve(data);
+    }
+  ).catch(err => reject(err));  
+});
+
 
 //handling the home page 
 app.get('/', function(_req, res){
